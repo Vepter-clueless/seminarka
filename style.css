@@ -1,0 +1,99 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #7bc4e0;
+    color: white;
+}
+
+.board {
+    display: flex;
+    padding: 20px;
+    gap: 20px;
+    overflow: auto;
+    min-height: 60vh;
+    max-width: 100wh;
+}
+
+.column-input {
+    all: unset;
+    border: 2px solid rgb(171, 198, 238);
+    border-radius: 5px;
+    height: auto;
+    width: 100%;
+    max-width: 300px; /* Pevná šířka nebo procentuální hodnota */
+    resize: none; /* Zakáže změnu velikosti */
+    overflow: hidden; /* Zajistí zalamování dlouhých slov */
+    word-wrap: break-word; /* Alternativní zalamování slov */
+    white-space: pre-wrap; /* Zalamování textu při psaní */
+  }
+.submit{
+    all: unset;
+   background-color: rgb(0, 102, 255);
+   cursor: pointer;
+   padding: 10px 5px;
+   border:  1px solid  rgb(0, 102, 255);
+   border-radius: 10px;
+   font-weight: bold;
+   width: 50%;
+   text-align: center;
+}
+
+
+.column{
+    background-color: #111;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    height: fit-content;
+    min-width: 250px;
+    word-wrap: break-word; /* Zalamování slov */
+  overflow-wrap: break-word; /* Alternativní zalamování slov */
+}
+
+.column h2 {
+    font-size: 18px;
+    margin: 0 10px 0 10px;
+    max-width: 230px;
+    
+}
+
+.card {
+    background-color: #222;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.add-card {
+    margin-top: 10px;
+    padding: 10px;
+    text-align: center;
+    background-color: #444;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.add-card:hover {
+    background-color: #555;
+}
+
+.add-column {
+
+   background-color: #444040;
+   height: fit-content;
+   min-width: 180px;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px;
+    cursor: pointer;
+   
+}
+
+.add-column:hover {
+    background-color: #0059b3;
+}
