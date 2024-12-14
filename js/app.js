@@ -25,19 +25,7 @@ class App {
           columnEl.appendChild(cardEl);
         });
         
-  
-        const addCardButton = document.createElement("button");
-        addCardButton.textContent = "+ Přidat kartu";
-        addCardButton.classList.add("add-card");
-        addCardButton.addEventListener("click", () => {
-          const cardTitle = prompt("Zadejte název karty:");
-          if (cardTitle) {
-            column.addCard(cardTitle);
-            this.render();
-          }
-        })
-  
-        columnEl.appendChild(addCardButton);
+        this.addCardCol(column, columnEl);
         board.appendChild(columnEl);
       });
   
@@ -96,9 +84,59 @@ class App {
       formContainer.appendChild(addColumnButton);
       board.appendChild(formContainer);
     }
+    addCardCol(column, columnEl) {
+      const formContainer = document.createElement("div");
+      formContainer.classList.add("add-card-form-container");
+    
+      const addCardButton = document.createElement("button");
+      addCardButton.textContent = "+ Přidej další kartu";
+      addCardButton.classList.add("add-card");
+    
+      addCardButton.addEventListener("click", () => {
+        formContainer.innerHTML = `
+          <form class="add-card-form">
+              <textarea class="card-input" placeholder="Zadejte název karty"></textarea>
+              <button class="submit">Přidat kartu</button>
+              <button type="button" class="cancel-button">✕</button>
+          </form>
+        `;
+    
+        const form = formContainer.querySelector(".add-card-form");
+        const cardInput = form.querySelector(".card-input");
+        const cancelButton = form.querySelector(".cancel-button");
+    
+        cardInput.focus();
+    
+        cardInput.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            const cardTitle = cardInput.value.trim();
+            if (cardTitle) {
+              column.addCard(cardTitle); 
+              this.render();
+            }
+          }
+        });
+  
+        form.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const cardTitle = cardInput.value.trim();
+          if (cardTitle) {
+            column.addCard(cardTitle);
+            this.render();
+          }
+        });
+    
+        cancelButton.addEventListener("click", () => {
+          this.render();
+        });
+      });
+    
+      formContainer.appendChild(addCardButton);
+      columnEl.appendChild(formContainer);
+    }
   }
   
-  // Initialize the app when the DOM is ready
   document.addEventListener("DOMContentLoaded", function () {
     const app = new App();
     
