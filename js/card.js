@@ -1,7 +1,9 @@
 class Card {
-    constructor(title, description ="") {
+    constructor(title) {
         this.title = title;
-        this.description = description;
-        
+    }
+
+    editTitle(newTitle){
+        this.title = newTitle;
     }
 }

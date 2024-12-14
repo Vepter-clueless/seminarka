@@ -4,9 +4,15 @@ class Column {
         this.cards =[];
     }
 
-    addCard(title, description=""){
-        const card= new Card(title, description);
-        this.cards.push(card);
+    addCard(desc){
+        this.cards.push(new Card(desc));
+    }
+
+    editCard(newName){
+        this.name = newName;
+    }
+    removeCard(index){
+        this.cards.splice(index, 1);
     }
    
 }
