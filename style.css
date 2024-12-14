@@ -1,7 +1,7 @@
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background-color: #7bc4e0;
+    background-color: #9ccdff;
     color: white;
 }
 
@@ -13,7 +13,17 @@ body {
     min-height: 60vh;
     max-width: 100wh;
 }
-
+.add-column-form{
+    background-color: #111;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    height: fit-content;
+    min-width: 250px;
+    max-width: 250px;
+   
+   
+}
 .column-input {
     all: unset;
     border: 2px solid rgb(171, 198, 238);
@@ -37,7 +47,19 @@ body {
    width: 50%;
    text-align: center;
 }
-
+.cancel-button{
+    all: unset;
+    color: #666565;
+    font-size: large;
+    margin-left: 5px;;
+    cursor: pointer;
+    padding: 7px 10px;
+}
+.cancel-button:hover{
+    background-color: #353535;
+    border-radius: 5px;
+    
+}
 
 .column{
     background-color: #111;
