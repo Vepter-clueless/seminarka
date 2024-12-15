@@ -21,16 +21,15 @@ body {
     height: fit-content;
     min-width: 250px;
     max-width: 250px;
-   
-   
 }
+
 .column-input {
     all: unset;
     border: 2px solid rgb(171, 198, 238);
     border-radius: 5px;
     height: auto;
     width: 100%;
-    max-width: 300px; /* Pevná šířka nebo procentuální hodnota */
+    max-width: 250px; /* Pevná šířka nebo procentuální hodnota */
     resize: none; /* Zakáže změnu velikosti */
     overflow: hidden; /* Zajistí zalamování dlouhých slov */
     word-wrap: break-word; /* Alternativní zalamování slov */
@@ -72,6 +71,17 @@ body {
     min-width: 250px;
     max-width: 250px;
 }
+.card {
+    background-color: #222;
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    word-wrap: break-word; /* Zajistí zalamování slov */
+    overflow-wrap: break-word; /* Alternativní zalamování slov */
+    white-space: pre-wrap; /* Zalamování textu */
+    text-overflow: ellipsis;
+}
 .card-input{
     all: unset;
     border: 2px solid rgb(171, 198, 238);
@@ -84,7 +94,7 @@ body {
     word-wrap: break-word; 
     white-space: pre-wrap; 
 }
-
+    
 .column{
     background-color: #111;
     border-radius: 8px;
@@ -99,17 +109,23 @@ body {
 .column h2 {
     font-size: 18px;
     margin: 0 10px 0 10px;
-    max-width: 230px;
+    max-width: 78%;
+    flex-grow: 2;
+}
+.card-text{
+    display: flex;
     
 }
+.card p{
+    all: unset;
+    max-width: 85%;
+    flex-grow: 2;
+   
 
-.card {
-    background-color: #222;
-    padding: 10px;
-    margin: 10px 0;
-    border-radius: 6px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
+
+
+
 
 .add-card {
     margin-top: 10px;
@@ -143,58 +159,14 @@ body {
 .add-column:hover {
     background-color: #0059b3;
 }
-.column-header {
+.edit-icon{
+    all: unset;
+    
+}
+.column-header{
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
 }
-
-.column-header h2 {
-    flex-grow: 1; /* Tím zajistíme, že text zabere maximum prostoru */
-    margin: 0;
-    max-width: 200px; /* Omezíme šířku názvu */
-    overflow: hidden; /* Skryjeme přetékající text */
-    text-overflow: ellipsis; /* Tři tečky u dlouhých textů */
-    white-space: nowrap; /* Text zůstane na jednom řádku */
-}
-
-.column-header span {
-    margin-left: 8px; /* Mezera mezi ikonou a textem */
+.edit-icon, .delete-icon{
     cursor: pointer;
-    font-size: 16px;
 }
 
-.column-header span:hover {
-    color: #ccc; /* Změna barvy při najetí myší */
-}
-
-/* Karta s ikonami zarovnanými vedle textu */
-.card {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #222;
-    padding: 10px;
-    margin: 10px 0;
-    border-radius: 6px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.card span {
-    margin-left: 8px;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-.card span:hover {
-    color: #ccc;
-}
-
-/* Přidání trochu prostoru pro text v kartě */
-.card span:first-child {
-    flex-grow: 1;
-    overflow: hidden; /* Skryje přetékající text */
-    text-overflow: ellipsis; /* Tři tečky u dlouhých textů */
-    white-space: nowrap; /* Text zůstane na jednom řádku */
-}

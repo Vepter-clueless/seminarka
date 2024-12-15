@@ -6,7 +6,7 @@ class App {
 
   render() {
     const board = document.querySelector(".board");
-    board.innerHTML = ""; // Clear board
+    board.innerHTML = ""; 
 
     this.columns.forEach((column, columnIndex) => {
       const columnEl = document.createElement("div");
@@ -38,6 +38,12 @@ class App {
     headerTitle.textContent = column.name;
     headerTitle.setAttribute("contenteditable", "false");
     headerTitle.addEventListener("blur", () => this.editColumn(headerTitle, column));
+    headerTitle.addEventListener("keydown", (e)=>{
+      if (e.key === "Enter") {
+        e.preventDefault();
+        headerTitle.blur();
+      }
+    })
 
     const editIcon = document.createElement("span");
     editIcon.textContent = "✏️";
@@ -60,10 +66,19 @@ class App {
     const cardEl = document.createElement("div");
     cardEl.classList.add("card");
 
-    const cardTitle = document.createElement("span");
+    const cardTextCont = document.createElement("div");
+    cardTextCont.classList.add("card-text");
+
+    const cardTitle = document.createElement("p");
     cardTitle.textContent = card.title;
     cardTitle.setAttribute("contenteditable", "false");
     cardTitle.addEventListener("blur", () => this.editCard(cardTitle, column, card));
+    cardTitle.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        cardTitle.blur();
+      }
+    });
 
     const editIcon = document.createElement("span");
     editIcon.textContent = "✏️";
@@ -75,12 +90,15 @@ class App {
     deleteIcon.classList.add("delete-icon");
     deleteIcon.addEventListener("click", () => this.deleteCard(column, cardIndex));
 
-    cardEl.appendChild(cardTitle);
-    cardEl.appendChild(editIcon);
-    cardEl.appendChild(deleteIcon);
+    // Přidání cardTitle do cardTextCont
+    cardTextCont.appendChild(cardTitle);
+    cardTextCont.appendChild(editIcon);
+    cardTextCont.appendChild(deleteIcon);
+    cardEl.appendChild(cardTextCont);
 
     return cardEl;
-  }
+}
+
 
   enableEdit(element) {
     element.setAttribute("contenteditable", "true");
@@ -143,6 +161,17 @@ class App {
           this.render();
         }
       });
+      columnInput.addEventListener("keydown", (e)=>{
+        if (e.key === "Enter") {
+          e.preventDefault();
+          const columnName = columnInput.value;
+          if (columnName) {
+            const newColumn = new Column(columnName);
+            this.columns.push(newColumn);
+            this.render();
+          } 
+        }
+      })
 
       cancelButton.addEventListener("click", () => {
         this.render();
@@ -184,6 +213,16 @@ class App {
           this.render();
         }
       });
+      cardInput.addEventListener("keydown", (e)=>{
+        if (e.key === "Enter") {
+          e.preventDefault();
+          const cardTitle = cardInput.value;
+          if (cardTitle) {
+            column.addCard(cardTitle);
+            this.render();
+          }
+        }
+      })
 
       cancelButton.addEventListener("click", () => {
         this.render();
