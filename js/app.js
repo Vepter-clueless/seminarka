@@ -12,6 +12,19 @@ class App {
       const columnEl = document.createElement("div");
       columnEl.classList.add("column");
 
+      columnEl.addEventListener("dragover", (e)=>{
+        e.preventDefault();
+      });
+      
+
+      columnEl.addEventListener("drop", (e)=>{
+        e.preventDefault();
+        const {columnIndex: fromColumnIndex, cardIndex} =JSON.parse(e.dataTransfer.getData("text/plain"));
+        const [movedCard] = this.columns[fromColumnIndex].cards.splice(cardIndex,1);
+        this.columns[columnIndex].cards.push(movedCard);
+        this.render();
+      })
+
       const header = this.createColumnHeader(column, columnIndex);
       columnEl.appendChild(header);
 
@@ -65,6 +78,11 @@ class App {
   createCardElement(column, card, cardIndex) {
     const cardEl = document.createElement("div");
     cardEl.classList.add("card");
+    cardEl.setAttribute("draggable", "true");
+
+    cardEl.addEventListener("dragstart", (e)=>{
+      e.dataTransfer.setData("text/plain", JSON.stringify({ columnIndex: this.columns.indexOf(column), cardIndex }));
+    });
 
     const cardTextCont = document.createElement("div");
     cardTextCont.classList.add("card-text");
@@ -72,6 +90,7 @@ class App {
     const cardTitle = document.createElement("p");
     cardTitle.textContent = card.title;
     cardTitle.setAttribute("contenteditable", "false");
+
     cardTitle.addEventListener("blur", () => this.editCard(cardTitle, column, card));
     cardTitle.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
