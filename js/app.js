@@ -1,7 +1,21 @@
 class App {
   constructor() {
     this.columns = [];
+    this.loadData();
     this.render();
+  }
+  saveData(){
+    localStorage.setItem("data", JSON.stringify(this.columns));
+  }
+  loadData(){
+    const data = localStorage.getItem("data");
+    if(data){
+      this.columns = JSON.parse(data).map(columnData =>{
+        const column = new Column(columnData.name);
+        column.cards = columnData.cards.map(cardData => new Card(cardData.title));
+        return column;
+      });
+    }
   }
 
   render() {
@@ -22,6 +36,7 @@ class App {
         const {columnIndex: fromColumnIndex, cardIndex} =JSON.parse(e.dataTransfer.getData("text/plain"));
         const [movedCard] = this.columns[fromColumnIndex].cards.splice(cardIndex,1);
         this.columns[columnIndex].cards.push(movedCard);
+        this.saveData();
         this.render();
       })
 
@@ -50,7 +65,10 @@ class App {
     const headerTitle = document.createElement("h2");
     headerTitle.textContent = column.name;
     headerTitle.setAttribute("contenteditable", "false");
-    headerTitle.addEventListener("blur", () => this.editColumn(headerTitle, column));
+    headerTitle.addEventListener("blur", () =>{
+      this.editColumn(headerTitle, column)
+      this.saveData();
+    } );
     headerTitle.addEventListener("keydown", (e)=>{
       if (e.key === "Enter") {
         e.preventDefault();
@@ -66,7 +84,10 @@ class App {
     const deleteIcon = document.createElement("span");
     deleteIcon.textContent = "🗑️";
     deleteIcon.classList.add("delete-icon");
-    deleteIcon.addEventListener("click", () => this.deleteColumn(columnIndex));
+    deleteIcon.addEventListener("click", () => {
+      this.deleteColumn(columnIndex)
+      this.saveData();
+    });
 
     header.appendChild(headerTitle);
     header.appendChild(editIcon);
@@ -91,7 +112,10 @@ class App {
     cardTitle.textContent = card.title;
     cardTitle.setAttribute("contenteditable", "false");
 
-    cardTitle.addEventListener("blur", () => this.editCard(cardTitle, column, card));
+    cardTitle.addEventListener("blur", () => {
+      this.editCard(cardTitle, column, card)
+      this.saveData();
+    });
     cardTitle.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
         e.preventDefault();
@@ -107,7 +131,10 @@ class App {
     const deleteIcon = document.createElement("span");
     deleteIcon.textContent = "🗑️";
     deleteIcon.classList.add("delete-icon");
-    deleteIcon.addEventListener("click", () => this.deleteCard(column, cardIndex));
+    deleteIcon.addEventListener("click", () => {
+      this.deleteCard(column, cardIndex)
+      this.saveData();
+    });
 
     // Přidání cardTitle do cardTextCont
     cardTextCont.appendChild(cardTitle);
@@ -126,17 +153,20 @@ class App {
 
   editColumn(headerTitle, column) {
     column.name = headerTitle.textContent.trim();
+    this.saveData();
     this.render();
   }
 
   editCard(cardTitle, column, card) {
     card.title = cardTitle.textContent.trim();
+    this.saveData();
     this.render();
   }
 
   deleteColumn(columnIndex) {
     if (confirm(`Opravdu chcete odstranit tento sloupec?`)) {
       this.columns.splice(columnIndex, 1);
+      this.saveData();
       this.render();
     }
   }
@@ -144,6 +174,7 @@ class App {
   deleteCard(column, cardIndex) {
     if (confirm(`Opravdu chcete odstranit tuto kartu?`)) {
       column.cards.splice(cardIndex, 1);
+      this.saveData();
       this.render();
     }
   }
@@ -177,6 +208,7 @@ class App {
         if (columnName) {
           const newColumn = new Column(columnName);
           this.columns.push(newColumn);
+          this.saveData();
           this.render();
         }
       });
@@ -187,6 +219,7 @@ class App {
           if (columnName) {
             const newColumn = new Column(columnName);
             this.columns.push(newColumn);
+            this.saveData();
             this.render();
           } 
         }
@@ -229,6 +262,7 @@ class App {
         const cardTitle = cardInput.value;
         if (cardTitle) {
           column.addCard(cardTitle);
+          this.saveData();
           this.render();
         }
       });
@@ -238,6 +272,7 @@ class App {
           const cardTitle = cardInput.value;
           if (cardTitle) {
             column.addCard(cardTitle);
+            this.saveData();
             this.render();
           }
         }
