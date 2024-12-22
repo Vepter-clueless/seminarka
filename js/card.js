@@ -4,6 +4,6 @@ class Card {
     }
 
     editTitle(newTitle){
-        this.title = newTitle;
+        this.title = newTitle.trim();
     }
 }

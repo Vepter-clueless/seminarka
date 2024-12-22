@@ -1,7 +1,7 @@
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background-color: #9ccdff;
+    background-image: url(pozadi.png);
     color: white;
 }
 
@@ -12,6 +12,22 @@ body {
     overflow: auto;
     min-height: 60vh;
     max-width: 100wh;
+    padding-left: 50px;
+}
+.text{
+    font-size: 20px;
+    display: flex;
+    justify-content: center;
+}
+h1{
+    
+    text-align: center;
+    background-color: black;
+    padding: 20px;
+    width: fit-content;
+    text-shadow: 2px 2px 8px #b4b4b4;
+    border-radius: 10px;
+    border: 1px solid white;
 }
 .add-column-form{
     background-color: #111;
@@ -29,7 +45,7 @@ body {
     border-radius: 5px;
     height: auto;
     width: 100%;
-    max-width: 250px; /* Pevná šířka nebo procentuální hodnota */
+    max-width: 220px; /* Pevná šířka nebo procentuální hodnota */
     resize: none; /* Zakáže změnu velikosti */
     overflow: hidden; /* Zajistí zalamování dlouhých slov */
     word-wrap: break-word; /* Alternativní zalamování slov */
@@ -76,6 +92,7 @@ body {
     padding: 10px;
     margin: 10px 0;
     border-radius: 6px;
+    max-width: 230px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     word-wrap: break-word; /* Zajistí zalamování slov */
     overflow-wrap: break-word; /* Alternativní zalamování slov */
@@ -88,7 +105,7 @@ body {
     border-radius: 5px;
     height: auto;
     width: 100%;
-    max-width: 300px; 
+    max-width: 230px; 
     resize: none; 
     overflow: hidden; 
     word-wrap: break-word; 
@@ -97,11 +114,13 @@ body {
     
 .column{
     background-color: #111;
+    border: 1px solid white;
     border-radius: 8px;
     padding: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     height: fit-content;
     min-width: 250px;
+    max-width: 250px;
     word-wrap: break-word; /* Zalamování slov */
   overflow-wrap: break-word; /* Alternativní zalamování slov */
 }
@@ -109,7 +128,7 @@ body {
 .column h2 {
     font-size: 18px;
     margin: 0 10px 0 10px;
-    max-width: 78%;
+    max-width: 75%;
     flex-grow: 2;
 }
 .card-text{
@@ -123,10 +142,6 @@ body {
    
 
 }
-
-
-
-
 .add-card {
     margin-top: 10px;
     padding: 10px;

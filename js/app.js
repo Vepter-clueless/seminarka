@@ -17,6 +17,20 @@ class App {
       });
     }
   }
+  createEditAndDeleteButtons(targetElement, onEdit, onDelete) {
+    const editIcon = document.createElement("span");
+    editIcon.textContent = "✏️";
+    editIcon.classList.add("edit-icon");
+    editIcon.addEventListener("click", onEdit);
+
+    const deleteIcon = document.createElement("span");
+    deleteIcon.textContent = "🗑️";
+    deleteIcon.classList.add("delete-icon");
+    deleteIcon.addEventListener("click", onDelete);
+
+    targetElement.appendChild(editIcon);
+    targetElement.appendChild(deleteIcon);
+  }
 
   render() {
     const board = document.querySelector(".board");
@@ -69,29 +83,19 @@ class App {
       this.editColumn(headerTitle, column)
       this.saveData();
     } );
+
     headerTitle.addEventListener("keydown", (e)=>{
       if (e.key === "Enter") {
         e.preventDefault();
         headerTitle.blur();
       }
     })
-
-    const editIcon = document.createElement("span");
-    editIcon.textContent = "✏️";
-    editIcon.classList.add("edit-icon");
-    editIcon.addEventListener("click", () => this.enableEdit(headerTitle));
-
-    const deleteIcon = document.createElement("span");
-    deleteIcon.textContent = "🗑️";
-    deleteIcon.classList.add("delete-icon");
-    deleteIcon.addEventListener("click", () => {
-      this.deleteColumn(columnIndex)
-      this.saveData();
-    });
-
     header.appendChild(headerTitle);
-    header.appendChild(editIcon);
-    header.appendChild(deleteIcon);
+    this.createEditAndDeleteButtons(header,
+       ()=> this.enableEdit(headerTitle),
+       ()=>{
+        this.deleteColumn(columnIndex);
+       })
 
     return header;
   }
@@ -122,25 +126,11 @@ class App {
         cardTitle.blur();
       }
     });
-
-    const editIcon = document.createElement("span");
-    editIcon.textContent = "✏️";
-    editIcon.classList.add("edit-icon");
-    editIcon.addEventListener("click", () => this.enableEdit(cardTitle));
-
-    const deleteIcon = document.createElement("span");
-    deleteIcon.textContent = "🗑️";
-    deleteIcon.classList.add("delete-icon");
-    deleteIcon.addEventListener("click", () => {
-      this.deleteCard(column, cardIndex)
-      this.saveData();
-    });
-
-    // Přidání cardTitle do cardTextCont
     cardTextCont.appendChild(cardTitle);
-    cardTextCont.appendChild(editIcon);
-    cardTextCont.appendChild(deleteIcon);
     cardEl.appendChild(cardTextCont);
+    this.createEditAndDeleteButtons(cardTextCont, 
+      ()=> this.enableEdit(cardTitle), 
+      ()=> this.deleteCard(cardIndex, column));
 
     return cardEl;
 }
