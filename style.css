@@ -13,6 +13,7 @@ body {
     min-height: 60vh;
     max-width: 100wh;
     padding-left: 50px;
+    padding-right: 100px;
 }
 .text{
     font-size: 20px;
@@ -38,13 +39,29 @@ h1{
     min-width: 250px;
     max-width: 250px;
 }
+*::-webkit-scrollbar {
+    width: auto;
+    height: 15px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background:none;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background-color: rgb(107, 0, 66);
+    border-radius: 10px;
+    border: 1px solid #2c29ca;
+  }
+
 
 .column-input {
     all: unset;
     border: 2px solid rgb(171, 198, 238);
     border-radius: 5px;
-    height: auto;
+    height:auto;
     width: 100%;
+    padding: 5px;
     max-width: 220px; /* Pevná šířka nebo procentuální hodnota */
     resize: none; /* Zakáže změnu velikosti */
     overflow: hidden; /* Zajistí zalamování dlouhých slov */
@@ -101,6 +118,7 @@ h1{
 }
 .card-input{
     all: unset;
+    padding: 5px;
     border: 2px solid rgb(171, 198, 238);
     border-radius: 5px;
     height: auto;
@@ -137,7 +155,7 @@ h1{
 }
 .card p{
     all: unset;
-    max-width: 85%;
+    max-width: 80%;
     flex-grow: 2;
    
 
@@ -164,7 +182,7 @@ h1{
    height: fit-content;
    min-width: 180px;
     color: white;
-    border: none;
+    border: 1px solid white;
     border-radius: 8px;
     padding: 10px;
     cursor: pointer;

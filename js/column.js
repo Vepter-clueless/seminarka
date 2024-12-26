@@ -9,11 +9,12 @@ class Column {
         this.cards.push(newCard);
     }
 
-    editCard(newName){
+    editColunmName(newName){
         this.name = newName.trim();
+        
     }
     removeCard(index){
-        if (index>=0 && index < this.cards.length) {
+        if (index>=0 && index < this.cards.length && confirm("Opravdu chcete odstranit tuto kartu?")) {
             this.cards.splice(index,1)
         }
     }

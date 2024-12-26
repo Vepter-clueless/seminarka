@@ -4,55 +4,32 @@ class App {
     this.loadData();
     this.render();
   }
-  saveData(){
+
+  saveData() {
     localStorage.setItem("data", JSON.stringify(this.columns));
   }
-  loadData(){
+
+  loadData() {
     const data = localStorage.getItem("data");
-    if(data){
-      this.columns = JSON.parse(data).map(columnData =>{
+    if (data) {
+      this.columns = JSON.parse(data).map((columnData) => {
         const column = new Column(columnData.name);
-        column.cards = columnData.cards.map(cardData => new Card(cardData.title));
+        column.cards = columnData.cards.map((cardData) => new Card(cardData.title));
         return column;
       });
     }
   }
-  createEditAndDeleteButtons(targetElement, onEdit, onDelete) {
-    const editIcon = document.createElement("span");
-    editIcon.textContent = "✏️";
-    editIcon.classList.add("edit-icon");
-    editIcon.addEventListener("click", onEdit);
-
-    const deleteIcon = document.createElement("span");
-    deleteIcon.textContent = "🗑️";
-    deleteIcon.classList.add("delete-icon");
-    deleteIcon.addEventListener("click", onDelete);
-
-    targetElement.appendChild(editIcon);
-    targetElement.appendChild(deleteIcon);
-  }
 
   render() {
     const board = document.querySelector(".board");
-    board.innerHTML = ""; 
+    board.innerHTML = ""; // Vymaže obsah před tím, než přidáme nový
 
     this.columns.forEach((column, columnIndex) => {
       const columnEl = document.createElement("div");
       columnEl.classList.add("column");
 
-      columnEl.addEventListener("dragover", (e)=>{
-        e.preventDefault();
-      });
-      
-
-      columnEl.addEventListener("drop", (e)=>{
-        e.preventDefault();
-        const {columnIndex: fromColumnIndex, cardIndex} =JSON.parse(e.dataTransfer.getData("text/plain"));
-        const [movedCard] = this.columns[fromColumnIndex].cards.splice(cardIndex,1);
-        this.columns[columnIndex].cards.push(movedCard);
-        this.saveData();
-        this.render();
-      })
+      columnEl.addEventListener("dragover", (e) => e.preventDefault());
+      columnEl.addEventListener("drop", (e) => this.handleDrop(e, columnIndex));
 
       const header = this.createColumnHeader(column, columnIndex);
       columnEl.appendChild(header);
@@ -62,14 +39,11 @@ class App {
         columnEl.appendChild(cardEl);
       });
 
-      // Přidání formuláře pro přidání karet
-      this.addCardCol(column, columnEl);
-
+      this.addCardForm(columnEl, column);
       board.appendChild(columnEl);
     });
 
-    // Přidání formuláře pro přidání sloupců
-    this.addColumn(board);
+    this.addColumnForm(board);
   }
 
   createColumnHeader(column, columnIndex) {
@@ -79,23 +53,21 @@ class App {
     const headerTitle = document.createElement("h2");
     headerTitle.textContent = column.name;
     headerTitle.setAttribute("contenteditable", "false");
-    headerTitle.addEventListener("blur", () =>{
-      this.editColumn(headerTitle, column)
-      this.saveData();
-    } );
+    headerTitle.addEventListener("blur", () => {
+      column.editColunmName(headerTitle.textContent.trim());
+      headerTitle.setAttribute("contenteditable", "false")
+      this.updateAndRender();
+    });
 
-    headerTitle.addEventListener("keydown", (e)=>{
-      if (e.key === "Enter") {
-        e.preventDefault();
-        headerTitle.blur();
-      }
-    })
+    headerTitle.addEventListener("keydown", (e) => this.handleEnterKey(e, headerTitle));
+
     header.appendChild(headerTitle);
-    this.createEditAndDeleteButtons(header,
-       ()=> this.enableEdit(headerTitle),
-       ()=>{
+    header.appendChild(this.createButton("✏️", "edit-icon", () => this.enableEdit(headerTitle)));
+    header.appendChild(
+      this.createButton("🗑️", "delete-icon", () => {
         this.deleteColumn(columnIndex);
-       })
+      })
+    );
 
     return header;
   }
@@ -105,86 +77,130 @@ class App {
     cardEl.classList.add("card");
     cardEl.setAttribute("draggable", "true");
 
-    cardEl.addEventListener("dragstart", (e)=>{
+    cardEl.addEventListener("dragstart", (e) => {
       e.dataTransfer.setData("text/plain", JSON.stringify({ columnIndex: this.columns.indexOf(column), cardIndex }));
     });
 
-    const cardTextCont = document.createElement("div");
-    cardTextCont.classList.add("card-text");
+    const cardText = document.createElement("div");
+    cardText.classList.add("card-text");
 
     const cardTitle = document.createElement("p");
     cardTitle.textContent = card.title;
     cardTitle.setAttribute("contenteditable", "false");
-
     cardTitle.addEventListener("blur", () => {
-      this.editCard(cardTitle, column, card)
-      this.saveData();
+      card.editTitle(cardTitle.textContent.trim());
+      this.updateAndRender();
     });
-    cardTitle.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        cardTitle.blur();
-      }
-    });
-    cardTextCont.appendChild(cardTitle);
-    cardEl.appendChild(cardTextCont);
-    this.createEditAndDeleteButtons(cardTextCont, 
-      ()=> this.enableEdit(cardTitle), 
-      ()=> this.deleteCard(cardIndex, column));
+
+    cardTitle.addEventListener("keydown", (e) => this.handleEnterKey(e, cardTitle));
+
+    
+    cardText.appendChild(cardTitle);
+    cardText.appendChild(this.createButton("✏️", "edit-icon", () => this.enableEdit(cardTitle)));
+    cardText.appendChild(
+      this.createButton("🗑️", "delete-icon", () => {
+        column.removeCard(cardIndex);
+        this.updateAndRender();
+      })
+    );
+    
+    cardEl.appendChild(cardText);
 
     return cardEl;
-}
+  }
 
+  createButton(icon, className, callback) {
+    const button = document.createElement("span");
+    button.textContent = icon;
+    button.classList.add(className);
+    button.addEventListener("click", callback);
+    return button;
+  }
+
+  handleEnterKey(e, element) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      element.blur();
+    }
+  }
 
   enableEdit(element) {
     element.setAttribute("contenteditable", "true");
     element.focus();
   }
 
-  editColumn(headerTitle, column) {
-    column.name = headerTitle.textContent.trim();
-    this.saveData();
-    this.render();
-  }
-
-  editCard(cardTitle, column, card) {
-    card.title = cardTitle.textContent.trim();
-    this.saveData();
-    this.render();
-  }
-
   deleteColumn(columnIndex) {
-    if (confirm(`Opravdu chcete odstranit tento sloupec?`)) {
+    if (confirm("Opravdu chcete odstranit tento sloupec?")) {
       this.columns.splice(columnIndex, 1);
-      this.saveData();
-      this.render();
+      this.updateAndRender();
     }
   }
 
-  deleteCard(column, cardIndex) {
-    if (confirm(`Opravdu chcete odstranit tuto kartu?`)) {
-      column.cards.splice(cardIndex, 1);
-      this.saveData();
-      this.render();
-    }
+  handleDrop(e, columnIndex) {
+    const { columnIndex: fromColumnIndex, cardIndex } = JSON.parse(e.dataTransfer.getData("text/plain"));
+    const [movedCard] = this.columns[fromColumnIndex].cards.splice(cardIndex, 1);
+    this.columns[columnIndex].cards.push(movedCard);
+    this.updateAndRender();
   }
 
-  addColumn(board) {
+  addCardForm(container, column) {
+    const formContainer = document.createElement("div");
+    formContainer.classList.add("add-card-form-container");
+
+    const button = document.createElement("button");
+    button.textContent = "+ Přidej další kartu";
+    button.classList.add("add-card");
+    button.addEventListener("click", () => {
+      formContainer.innerHTML = `
+        <form class="add-card-form">
+          <textarea class="card-input" placeholder="Zadejte název karty"></textarea>
+          <button type="submit" class="submit">Přidat</button>
+          <button type="button" class="cancel-button">✕</button>
+        </form>
+      `;
+
+      const form = formContainer.querySelector(".add-card-form");
+      const textarea = form.querySelector(".card-input");
+      const cancelButton = form.querySelector(".cancel-button");
+
+      textarea.focus();
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        if (textarea.value.trim()) {
+          column.addCard(textarea.value.trim());
+          this.updateAndRender();
+        }
+      });
+      form.addEventListener("keydown",(e)=>{
+        if (e.key === "Enter" && textarea.value.trim()) {
+          column.addCard(textarea.value.trim());
+          this.updateAndRender();
+        }
+      })
+
+      cancelButton.addEventListener("click", () => this.render());
+    });
+
+    formContainer.appendChild(button);
+    container.appendChild(formContainer);
+  }
+
+  addColumnForm(container) {
     const formContainer = document.createElement("div");
     formContainer.classList.add("add-column-form-container");
 
-    const addColumnButton = document.createElement("button");
-    addColumnButton.textContent = "+ Přidej další sloupec";
-    addColumnButton.classList.add("add-column");
-
-    addColumnButton.addEventListener("click", () => {
+    const button = document.createElement("button");
+    button.textContent = "+ Přidej další sloupec";
+    button.classList.add("add-column");
+    button.addEventListener("click", () => {
       formContainer.innerHTML = `
         <form class="add-column-form">
-            <textarea class="column-input" placeholder="Zadejte název sloupce"></textarea>
-            <button class="submit">Přidat sloupec</button>
-            <button type="button" class="cancel-button">✕</button>
-          </form>
-        `;
+          <textarea class="column-input" placeholder="Zadejte název sloupce"></textarea>
+          <button type="submit" class="submit">Přidat</button>
+          <button type="button" class="cancel-button">✕</button>
+        </form>
+      `;
 
       const form = formContainer.querySelector(".add-column-form");
       const columnInput = form.querySelector(".column-input");
@@ -194,91 +210,62 @@ class App {
 
       form.addEventListener("submit", (e) => {
         e.preventDefault();
-        const columnName = columnInput.value;
-        if (columnName) {
-          const newColumn = new Column(columnName);
+        if (columnInput.value.trim()) {
+          const newColumn = new Column(columnInput.value.trim());
           this.columns.push(newColumn);
-          this.saveData();
-          this.render();
+          this.updateAndRender();
         }
       });
-      columnInput.addEventListener("keydown", (e)=>{
-        if (e.key === "Enter") {
-          e.preventDefault();
-          const columnName = columnInput.value;
-          if (columnName) {
-            const newColumn = new Column(columnName);
+      form.addEventListener("keydown",(e)=>{
+        if (e.key ==="Enter" &&columnInput.value.trim()) {
+          const newColumn = new Column(columnInput.value.trim());
             this.columns.push(newColumn);
-            this.saveData();
-            this.render();
-          } 
+            this.updateAndRender();
         }
       })
 
-      cancelButton.addEventListener("click", () => {
-        this.render();
-      });
+      cancelButton.addEventListener("click", () => this.render());
     });
 
-    formContainer.appendChild(addColumnButton);
-    board.appendChild(formContainer);
+    formContainer.appendChild(button);
+    container.appendChild(formContainer);
   }
 
-  addCardCol(column, columnEl) {
-    const formContainer = document.createElement("div");
-    formContainer.classList.add("add-card-form-container");
-
-    const addCardButton = document.createElement("button");
-    addCardButton.textContent = "+ Přidej další kartu";
-    addCardButton.classList.add("add-card");
-
-    addCardButton.addEventListener("click", () => {
-      formContainer.innerHTML = `
-        <form class="add-card-form">
-            <textarea class="card-input" placeholder="Zadejte název karty"></textarea>
-            <button class="submit">Přidat kartu</button>
-            <button type="button" class="cancel-button">✕</button>
-          </form>
-        `;
-
-      const form = formContainer.querySelector(".add-card-form");
-      const cardInput = form.querySelector(".card-input");
-      const cancelButton = form.querySelector(".cancel-button");
-
-      cardInput.focus();
-
-      form.addEventListener("submit", (e) => {
-        e.preventDefault();
-        const cardTitle = cardInput.value;
-        if (cardTitle) {
-          column.addCard(cardTitle);
-          this.saveData();
-          this.render();
-        }
-      });
-      cardInput.addEventListener("keydown", (e)=>{
-        if (e.key === "Enter") {
-          e.preventDefault();
-          const cardTitle = cardInput.value;
-          if (cardTitle) {
-            column.addCard(cardTitle);
-            this.saveData();
-            this.render();
-          }
-        }
-      })
-
-      cancelButton.addEventListener("click", () => {
-        this.render();
-      });
-    });
-
-    formContainer.appendChild(addCardButton);
-    columnEl.appendChild(formContainer);
+  updateAndRender() {
+    this.saveData();
+    this.render();
   }
 }
+//scroll pomocí myši
+let isMouseDown = false;
+let startX;
+let scrollLeft;
 
-// Initialize the app when the DOM is ready
-document.addEventListener("DOMContentLoaded", function () {
-  const app = new App();
+const container = document.querySelector('.board'); 
+
+container.addEventListener('mousedown', (e) => {
+  isMouseDown = true;
+  startX = e.pageX - container.offsetLeft; 
+  scrollLeft = container.scrollLeft; 
+  container.style.cursor = 'grabbing'; 
 });
+
+container.addEventListener('mouseleave', () => {
+  isMouseDown = false;
+  container.style.cursor = 'auto'; 
+});
+
+container.addEventListener('mouseup', () => {
+  isMouseDown = false;
+  container.style.cursor = 'auto'; 
+});
+
+container.addEventListener('mousemove', (e) => {
+  if (!isMouseDown) return; 
+
+  const x = e.pageX - container.offsetLeft; 
+  const walk = (x - startX); 
+  container.scrollLeft = scrollLeft - walk; 
+});
+
+document.addEventListener("DOMContentLoaded", () => new App());
