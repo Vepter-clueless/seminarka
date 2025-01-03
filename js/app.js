@@ -127,6 +127,12 @@ class App {
   enableEdit(element) {
     element.setAttribute("contenteditable", "true");
     element.focus();
+    
+    const selection = window.getSelection();
+    const range = document.createRange();
+    range.selectNodeContents(element);
+    selection.removeAllRanges();
+    selection.addRange(range);
   }
 
   deleteColumn(columnIndex) {
